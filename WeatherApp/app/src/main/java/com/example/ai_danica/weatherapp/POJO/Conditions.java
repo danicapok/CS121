@@ -1,4 +1,4 @@
-package com.example.ai_danica.weatherapp;
+package com.example.ai_danica.weatherapp.POJO;
 
 /**
  * Created by Ai_Danica on 1/28/2016.

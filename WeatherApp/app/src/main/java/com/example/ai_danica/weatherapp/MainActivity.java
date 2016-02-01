@@ -4,12 +4,14 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.ai_danica.weatherapp.POJO.Conditions;
+import com.example.ai_danica.weatherapp.POJO.Example;
+import com.example.ai_danica.weatherapp.POJO.Response1;
 import com.google.gson.Gson;
-
-import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -22,27 +24,35 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 
-
-
-
 public class MainActivity extends AppCompatActivity {
 
-    Conditions c;
-    String result;
+    TextView city;
+    TextView temperature;
+    TextView humidity;
+    TextView wind;
+    TextView weather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //printText();
+        city = (TextView) findViewById(R.id.city);
+        temperature = (TextView) findViewById(R.id.temperature);
+        humidity = (TextView) findViewById(R.id.humidity);
+        wind = (TextView) findViewById(R.id.wind);
+        weather = (TextView) findViewById(R.id.weather);
+
+
     }
 
     public void clickedButton(View v){
-        getURL();
+        getURL(v);
     }
 
-    private void getURL (){
+    private void getURL (View v){
+        final View viewer = v;
+
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         // set your desired log level
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -58,21 +68,26 @@ public class MainActivity extends AppCompatActivity {
 
         WeatherService service = retrofit.create(WeatherService.class);
 
-        final Call<Result> queryResponseCall =
-                service.registerUser(c, result);
-
+        Call<Example> test = service.getResponse();
         //Call retrofit asynchronously
-        queryResponseCall.enqueue(new Callback<Result>() {
+       test.enqueue(new Callback<Example>() {
             @Override
-            public void onResponse(Response<Result> response) {
+            public void onResponse(Response<Example> response) {
                 System.out.println("The result is: " + response.body());
-                String temperature = response.body().result;
-                System.out.println(temperature);
+                //System.out.println("" + response.body().response.conditions.observationLocation.city);
+                if(response.body().response.result.equals("error")){
+                    Toast.makeText(MainActivity.this, "Error Message: Cannot display temperature. Try again!",
+                            Toast.LENGTH_LONG).show();
+                }
+                else printConditions(response, viewer);
 
             }
 
             @Override
             public void onFailure(Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(MainActivity.this, "this is my Toast message!!! =)",
+                        Toast.LENGTH_LONG).show();
                 // Log error here since request failed
             }
         });
@@ -80,25 +95,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void printConditions(Response<Example> response, View v){
+        String location = response.body().response.conditions.observationLocation.city;
+        String elevation = response.body().response.conditions.observationLocation.elevation;
+        Double temp_f = response.body().response.conditions.tempF;
+        city.setText("City: " + location + " , elevation: " + elevation);
+        temperature.setText("Temperature: " + temp_f);
+
+
+    }
+
 
     public interface WeatherService {
         @GET("weather/default/get_weather")
-        Call<Result> registerUser(@Query("Conditions") Conditions c,
-                                                @Query("result") String result);
+         //Response1 response (@Query("Response") Response1 resp);
+        Call<Example> getResponse();
+        //Call<Response1> registerUser(@Query("Conditions") Conditions c,  @Query("response") String response);
     }
 
-    private void testing(){
-        Conditions c = new Conditions();
 
-
-    }
-
-    private void printText(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String s = prefs.getString("myprefs", null);
-        Gson gson = new Gson();
-
-        Conditions c = gson.fromJson(s, Conditions.class);
-        System.out.println(c.observationLocation.city);
-    }
 }
