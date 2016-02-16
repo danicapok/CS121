@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+     >
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/message"
+        android:width="200dp"
+        android:height="150dp"
+        android:background="@drawable/shape"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="43dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginBottom="35dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:id="@+id/send"
+        android:layout_alignBottom="@+id/message"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="sendClicked" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Refresh"
+        android:id="@+id/refresh"
+        android:layout_alignTop="@+id/message"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="refreshClicked" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/message"
+        android:layout_alignStart="@+id/message"
+        android:layout_above="@+id/message"
+        android:layout_toLeftOf="@+id/send"
+        android:layout_toStartOf="@+id/send" />
+</RelativeLayout>
